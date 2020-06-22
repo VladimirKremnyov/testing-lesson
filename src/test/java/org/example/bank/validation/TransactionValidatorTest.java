@@ -23,6 +23,7 @@ public class TransactionValidatorTest {
     public static final BigDecimal EMPTY_PRICE = null;
     public static final int FROM_ACCOUNT_NUMBER = 0;
     public static final int TO_ACCOUNT_NUMBER = 1;
+    public static final Transaction EMPTY_TRANSACTION = null;
 
     @Mock
     private TransactionValidator transactionValidator;
@@ -32,5 +33,11 @@ public class TransactionValidatorTest {
         Transaction transaction = new Transaction(LOWER_THEN_MIN_AMOUN, NO_CURRENCY_PAIR, EMPTY_PRICE, FROM_ACCOUNT_NUMBER, TO_ACCOUNT_NUMBER);
         boolean validationResult = transactionValidator.validate(transaction);
         assertFalse(validationResult);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldNPEWhenNULLPassed() {
+        TransactionValidator validator=new TransactionValidator();
+        validator.validate(EMPTY_TRANSACTION);
     }
 }
