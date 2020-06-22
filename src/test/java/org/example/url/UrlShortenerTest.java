@@ -14,9 +14,11 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class UrlShortenerTest {
 
-    public static final String EMPTY_STRING = "";
-    public static final String SHORTCUT = "someShortcut";
-    public static final String URL = "eiuwqheiuqwiueqoihw";
+    private static final String EMPTY_STRING = "";
+    private static final String SHORTCUT = "someShortcut";
+    private static final String URL = "eiuwqheiuqwiueqoihw";
+    private static final int EXPECTED_SHORTCUT_LENGTH = 5;
+    public static final String NO_SHORTCUT = null;
     private static ShortcutsDatabase database;
     private static UrlShortener urlShortener;
 
@@ -43,6 +45,18 @@ public class UrlShortenerTest {
         verifyNoMoreInteractions(database);
         verify(database, times(0)).save(any(), any());
         assertEquals(URL, captor.getValue());
+    }
+    @Test
+    public void shouldReturnFiveSymbolsShortCut() {
+        //GIVEN
+        when(database.findBy(contains("uwqhe"))).thenReturn(NO_SHORTCUT);
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        //WHEN
+        String shortcut = urlShortener.shorten(URL);
+        //THEN
+        verify(database).findBy(captor.capture());
+        assertEquals(URL, captor.getValue());
+        assertEquals(EXPECTED_SHORTCUT_LENGTH, shortcut.length());
     }
 
 }
