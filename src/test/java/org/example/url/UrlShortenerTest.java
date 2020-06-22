@@ -16,6 +16,7 @@ public class UrlShortenerTest {
 
     public static final String EMPTY_STRING = "";
     public static final String SHORTCUT = "someShortcut";
+    public static final String EMPTY_SHORTCUT = null;
     public static final String URL = "eiuwqheiuqwiueqoihw";
     private static ShortcutsDatabase database;
     private static UrlShortener urlShortener;
@@ -34,14 +35,18 @@ public class UrlShortenerTest {
     @Test
     public void shouldUseValueFromDBWhenItIsPresent() {
         //GIVEN
-        when(database.findBy(contains("uwqhe"))).thenReturn(SHORTCUT);
+        when(database.findBy(contains("uwqhe"))).thenReturn(EMPTY_SHORTCUT);
+
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         //WHEN
         urlShortener.shorten(URL);
         //THEN
+
         verify(database).findBy(captor.capture());
+
+        verify(database).save(eq(URL), anyString());
+
         verifyNoMoreInteractions(database);
-        verify(database, times(0)).save(any(), any());
         assertEquals(URL, captor.getValue());
     }
 
